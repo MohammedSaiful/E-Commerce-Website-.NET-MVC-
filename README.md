@@ -40,6 +40,7 @@ A simple E-Commerce web application built using **ASP.NET MVC** and **Entity Fra
 ---
 
 ## Project Structure
+```text
 ECommerceWeb/
 │
 ├── Controllers/ # MVC Controllers (Order, Customer, Login, Admin)
@@ -50,3 +51,26 @@ ECommerceWeb/
 ├── Scripts/ # JS and libraries
 ├── Content/ # CSS styles
 └── DataAccessFactory/ # Database access and context
+```
+## Project Preview
+### Login Page
+[Login Page Screenshot](Screenshots/Login.jpg)
+
+### Customer Order Page
+[Customer Order Page Screenshot](Screenshots/CustomerOrder.jpg)
+
+### Products Page
+[Products Page Screenshot](Screenshots/Products.jpg)
+
+### Cart Page
+[Cart Page Screenshot](Screenshots/Cart.jpg)
+
+### Customer Order Details
+[Customer Order Details Page Screenshot](Screenshots/CustomerOrderDetails.jpg)
+
+### Admin Orders
+[Admin Orders Screenshot](Screenshots/AdminApproval.jpg)
+
+### Customer Registration
+[Customer Registration Screenshot](Screenshots/CustomerRegistration.jpg)
+
