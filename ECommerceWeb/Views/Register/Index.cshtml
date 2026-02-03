@@ -1,0 +1,18 @@
+﻿<h2>Customer Registration</h2>
+
+@if (TempData["Msg"] != null)
+{
+    <p class="alert alert-@TempData["Class"]">@TempData["Msg"]</p>
+}
+
+<form method="post">
+    <input name="Name" class="form-control mb-2" placeholder="Full Name" required />
+    <input name="Email" class="form-control mb-2" placeholder="Email" required />
+    <input name="Address" class="form-control mb-2" placeholder="Address" />
+    <input name="Phone" class="form-control mb-2" placeholder="Phone" />
+
+    <input name="username" class="form-control mb-2" placeholder="Username" required />
+    <input name="password" type="password" class="form-control mb-2" placeholder="Password" required />
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>

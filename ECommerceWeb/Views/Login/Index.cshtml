@@ -11,9 +11,10 @@
     <div class="card p-4 shadow" style="max-width: 400px; width: 100%;">
         <h3 class="card-title text-center mb-4">Login</h3>
         <form method="post">
+            <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
-                <input type="text" class="form-control" name="username" placeholder="name@example.com" />
+                <input type="text" class="form-control" name="username" placeholder="Username" />
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>

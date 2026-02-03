@@ -3,45 +3,111 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title - ECommerce App</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+    @{
+        var user = Session["User"] as ECommerceWeb.Entities.User;
+        int cartCount = 0;
+
+        if (Session["cart"] != null)
+        {
+            cartCount = ((List<ECommerceWeb.DTOs.ProductDTO>)Session["cart"]).Count;
+        }
+    }
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
-            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+
+            @Html.ActionLink("ECommerce", "Index", "Home", null, new { @class = "navbar-brand" })
+
+            <!-- Bootstrap 4 toggle -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li><a href="/order/index">Order Products</a></li>
-                    @{
 
-                        int count = 0;
-                        if (Session["cart"] != null)
-                        {
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mr-auto">
 
-                            count = ((List<ECommerceWeb.DTOs.ProductDTO>)Session["cart"]).Count;
-                        }
+                    <li class="nav-item">
+                        @Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link" })
+                    </li>
 
+                    <li class="nav-item">
+                        @Html.ActionLink("About", "About", "Home", null, new { @class = "nav-link" })
+                    </li>
 
+                    <li class="nav-item">
+                        @Html.ActionLink("Contact", "Contact", "Home", null, new { @class = "nav-link" })
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/Order/Index" class="nav-link">Order Products</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/Order/ShowCart" class="nav-link">
+                            <i class="fa fa-shopping-cart"></i>
+                            Cart <span class="bg-danger">@cartCount</span>
+                        </a>
+                    </li>
+
+                    @* Admin menu *@
+                    @if (user != null && user.Type == "Admin")
+                    {
+                        <li class="nav-item">
+                            <a href="/Admin/Orders" class="nav-link text-warning">
+                                <i class="fa fa-cogs"></i> Admin Orders
+                            </a>
+                        </li>
                     }
-                    <li><a href="/order/showcart">Cart(@count)</a></li>
                 </ul>
+
+                <!-- Right side -->
+                <ul class="navbar-nav ml-auto">
+                    @if (user == null)
+                    {
+                        <li class="nav-item">
+                            <a href="/Login" class="nav-link">
+                                <i class="fa fa-sign-in"></i> Login
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Register" class="nav-link">
+                                <i class="fa fa-user-plus"></i> Register
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <span class="navbar-text text-light mr-2">
+                                Hello, @user.Name
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Login/Logout" class="nav-link text-danger">
+                                <i class="fa fa-sign-out"></i> Logout
+                            </a>
+                        </li>
+                    }
+                </ul>
+
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+
+    <div class="container body-content mt-3">
         @RenderBody()
         <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        <footer class="text-center">
+            <p>&copy; @DateTime.Now.Year - ECommerce Application</p>
         </footer>
     </div>
 

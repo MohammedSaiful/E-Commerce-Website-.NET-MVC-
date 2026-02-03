@@ -7,9 +7,9 @@ namespace ECommerceWeb.Enums
 {
     public enum OrderStatus
     {
-        OrderPlaced = 1,       // Customer just placed order
-        PendingApproval,        // Waiting for admin confirmation
-        Processing,             // Admin confirmed and preparing order
+        PendingApproval = 1,
+        Approved,
+        Processing,
         CancelledByUser,
         CancelledByAdmin,
         OnTheWay,

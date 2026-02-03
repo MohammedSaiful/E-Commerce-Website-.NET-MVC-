@@ -36,7 +36,8 @@ namespace ECommerceWeb.Controllers
             var pr = GetMapper().Map<ProductDTO>(p);
             pr.Qty = 1;
 
-            List<ProductDTO> cart = null;
+            List<ProductDTO> cart;
+
             if (Session["cart"] == null)
             {
                 cart = new List<ProductDTO>();
@@ -45,7 +46,18 @@ namespace ECommerceWeb.Controllers
             {
                 cart = (List<ProductDTO>)Session["cart"];
             }
-            cart.Add(pr);
+
+            var existing = cart.FirstOrDefault(c => c.Id == id);
+            if (existing != null)
+            {
+                existing.Qty++;
+            }
+            else
+            {
+                pr.Qty = 1;
+                cart.Add(pr);
+            }
+
             Session["cart"] = cart;
 
 
@@ -67,7 +79,18 @@ namespace ECommerceWeb.Controllers
         {
             var cart = (List<ProductDTO>)Session["cart"];
             var p = (from pr in cart where pr.Id == id select pr).SingleOrDefault();
-            p.Qty--;
+
+
+            if (p != null)
+            {
+                p.Qty--;
+                if (p.Qty <= 0)
+                    cart.Remove(p);
+            }
+
+            if (!cart.Any())
+                Session["cart"] = null;
+
             return RedirectToAction("ShowCart"); ;
         }
 
@@ -111,7 +134,7 @@ namespace ECommerceWeb.Controllers
             }
             db.SaveChanges();
             Session["cart"] = null;
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Customer");
         }
         public ActionResult Details(int id)
         {

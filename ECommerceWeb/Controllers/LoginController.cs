@@ -12,51 +12,57 @@ namespace ECommerceWeb.Controllers
     public class LoginController : Controller
     {
         ECommerceDB db = new ECommerceDB();
-        // GET: Login
+
         [HttpGet]
-        public ActionResult Index()
+        public ActionResult Index(string ReturnUrl)
         {
+            ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
+
         [HttpPost]
         public ActionResult Index(string username, string password, string ReturnUrl)
         {
             password = GetMd5Hash(password);
-            var user = (from u in db.Users
-                        where u.Username.Equals(username) &&
-                        u.Password.Equals(password)
-                        select u).SingleOrDefault();
-            if (user != null && user.Type.Equals("Customer"))
+
+            var user = db.Users.SingleOrDefault(u => u.Username == username && u.Password == password);
+            if (user != null)
             {
                 user.Password = null;
                 Session["User"] = user;
-                if (ReturnUrl != null)
-                {
-                    return RedirectToAction("ShowCart", "Order");
-                }
-                return RedirectToAction("Index", "Customer");
-            }
-            TempData["Msg"] = "Username Password Invalid";
-            TempData["Class"] = "danger";
 
+                // Redirect back to previous page if ReturnUrl exists
+                if (!string.IsNullOrEmpty(ReturnUrl))
+                    return Redirect(ReturnUrl);
+
+                // Redirect based on user type
+                if (user.Type == "Admin")
+                    return RedirectToAction("Orders", "Admin"); // Admin dashboard
+                else // Customer
+                    return RedirectToAction("Index", "Customer");
+            }
+
+            TempData["Msg"] = "Invalid username or password";
+            TempData["Class"] = "danger";
             return View();
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            return RedirectToAction("Index");
         }
 
         static string GetMd5Hash(string input)
         {
-            // Create MD5 instance
             using (MD5 md5 = MD5.Create())
             {
-                // Convert input string to byte array
-                byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+                byte[] bytes = Encoding.UTF8.GetBytes(input);
+                byte[] hash = md5.ComputeHash(bytes);
 
-                // Compute the MD5 hash
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
-
-                // Convert byte array to hexadecimal string
                 StringBuilder sb = new StringBuilder();
-                foreach (var b in hashBytes)
-                    sb.Append(b.ToString("x2"));  // x2 = lowercase hex format
+                foreach (var b in hash)
+                    sb.Append(b.ToString("x2"));
 
                 return sb.ToString();
             }

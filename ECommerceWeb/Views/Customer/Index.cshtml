@@ -24,7 +24,7 @@
             <td>@status.ToString()</td>
             <td>
                 <a href="/order/details/@item.Id" class="btn btn-primary">Details</a>
-                @if (item.StatusId == (int)ECommerceWeb.Enums.OrderStatus.OrderPlaced)
+                @if (item.StatusId == (int)ECommerceWeb.Enums.OrderStatus.PendingApproval)
                 {
                     <a href="/order/cancelbyuser/@item.Id" class="btn btn-danger">Cancel</a>
                 }

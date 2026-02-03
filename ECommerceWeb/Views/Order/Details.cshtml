@@ -1,39 +1,78 @@
-﻿
+﻿@using ECommerceWeb.Enums
+@model ECommerceWeb.DTOs.OrderProductDTO
+
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Order Details";
+    var user = Session["User"] as ECommerceWeb.Entities.User;
 }
 
 <h2>Order Details</h2>
-<h3>Order ID: @Model.Id</h3>
-<td>
-    @{
-        ECommerceWeb.Enums.OrderStatus status = (ECommerceWeb.Enums.OrderStatus)item.StatusId;
-    }
-    @status.ToString()
-    @if (item.StatusId == (int)OrderStatus.PendingApproval)
+<h4>Order ID: @Model.Id</h4>
+
+@{
+    // Get status from StatusId
+    OrderStatus status = (OrderStatus)Model.StatusId;
+}
+
+<p>
+    Status: <strong>@status.ToString()</strong>
+    @if (status == OrderStatus.PendingApproval)
     {
         <span class="badge bg-warning">Pending Approval</span>
     }
-</td>
-<table class="table table-bordered">
-    <tr>
-        <th>PId</th>
-        <th>Qty</th>
-        <th>Price</th>
-        <th>Unit Total</th>
-    </tr>
-    @foreach (var item in Model.OrderDetails)
+    else if (status == OrderStatus.Approved)
     {
-        <tr>
-            <td>@item.Product.Name</td>
-            <td>@item.Qty</td>
-            <td>@item.Price</td>
-            <td>@(item.Qty * item.Price)</td>
-        </tr>
+        <span class="badge bg-success">Approved</span>
     }
-    <tr>
-        <th colspan="3">Grand Total</th>
-        <th>@Model.Total</th>
-    </tr>
-</table>
+    else if (status == OrderStatus.Processing)
+    {
+        <span class="badge bg-info">Processing</span>
+    }
+    else if (status == OrderStatus.CancelledByUser || status == OrderStatus.CancelledByAdmin)
+    {
+        <span class="badge bg-danger">Cancelled</span>
+    }
+    else if (status == OrderStatus.OnTheWay)
+    {
+        <span class="badge bg-secondary">On The Way</span>
+    }
+    else if (status == OrderStatus.Delivered)
+    {
+        <span class="badge bg-primary">Delivered</span>
+    }
+</p>
 
+@* Admin actions if user is admin and order is pending *@
+@if (user != null && user.Type == "Admin" && status == OrderStatus.PendingApproval)
+{
+    <div class="mb-3">
+        <a href="/Admin/ApproveOrder/@Model.Id" class="btn btn-success">Approve</a>
+        <a href="/Admin/CancelOrder/@Model.Id" class="btn btn-danger">Cancel</a>
+    </div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderDetails)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Qty</td>
+                <td>@item.Price.ToString("0.00")</td>
+                <td>@((item.Qty * item.Price).@ToString("0.00"))</td>
+            </tr>
+        }
+        <tr>
+            <th colspan="3" class="text-right">Grand Total</th>
+            <th>@Model.Total.ToString("0.00")</th>
+        </tr>
+    </tbody>
+</table>

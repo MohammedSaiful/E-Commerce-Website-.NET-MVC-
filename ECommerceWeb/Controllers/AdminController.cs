@@ -1,5 +1,8 @@
-﻿using ECommerceWeb.Auth;
+﻿using AutoMapper;
+using ECommerceWeb.Auth;
 using ECommerceWeb.DataAccessFactory;
+using ECommerceWeb.DTOs;
+using ECommerceWeb.Entities;
 using ECommerceWeb.Enums;
 using System;
 using System.Collections.Generic;
@@ -9,7 +12,7 @@ using System.Web.Mvc;
 
 namespace ECommerceWeb.Controllers
 {
-    [Logged]
+    [AdminLogged]
     public class AdminController : Controller
     {
         // GET: Admin
@@ -19,31 +22,42 @@ namespace ECommerceWeb.Controllers
         }
         ECommerceDB db = new ECommerceDB();
 
-        // Show all pending orders
-        public ActionResult PendingOrders()
+        Mapper GetMapper()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Order, OrderDTO>();
+            });
+            return new Mapper(config);
+        }
+
+        // Pending orders list
+        public ActionResult Orders()
         {
             var orders = db.Orders
-                           .Where(o => o.StatusId == (int)OrderStatus.PendingApproval)
-                           .ToList();
-            return View(orders);
+                .Where(o => o.StatusId == (int)OrderStatus.PendingApproval)
+                .ToList();
+
+            var data = GetMapper().Map<List<OrderDTO>>(orders);
+            return View(data);
         }
 
         // Approve order
-        public ActionResult ApproveOrder(int id)
+        public ActionResult Approve(int id)
         {
             var order = db.Orders.Find(id);
-            order.StatusId = (int)OrderStatus.Processing; // Admin confirmed
+            order.StatusId = (int)OrderStatus.Approved;
             db.SaveChanges();
-            return RedirectToAction("PendingOrders");
+            return RedirectToAction("Orders");
         }
 
         // Cancel order
-        public ActionResult CancelOrder(int id)
+        public ActionResult Cancel(int id)
         {
             var order = db.Orders.Find(id);
             order.StatusId = (int)OrderStatus.CancelledByAdmin;
             db.SaveChanges();
-            return RedirectToAction("PendingOrders");
+            return RedirectToAction("Orders");
         }
     }
 }

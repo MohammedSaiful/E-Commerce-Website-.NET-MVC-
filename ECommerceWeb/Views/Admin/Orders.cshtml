@@ -1,0 +1,31 @@
+﻿@model List<ECommerceWeb.DTOs.OrderDTO>
+
+<h2>Pending Orders</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Order ID</th>
+        <th>Customer ID</th>
+        <th>Date</th>
+        <th>Total</th>
+        <th>Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.CustomerId</td>
+            <td>@item.Date</td>
+            <td>@item.Total</td>
+            <td>
+                <a href="/Admin/Approve/@item.Id" class="btn btn-success btn-sm">
+                    Approve
+                </a>
+                <a href="/Admin/Cancel/@item.Id" class="btn btn-danger btn-sm">
+                    Cancel
+                </a>
+            </td>
+        </tr>
+    }
+</table>

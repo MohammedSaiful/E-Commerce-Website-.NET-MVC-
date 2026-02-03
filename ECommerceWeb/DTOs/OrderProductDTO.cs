@@ -5,7 +5,7 @@ using System.Web;
 
 namespace ECommerceWeb.DTOs
 {
-    public class OrderProductDTO
+    public class OrderProductDTO : OrderDTO
     {
         public List<OrderDetailDTO> OrderDetails { get; set; }
         public OrderProductDTO()
